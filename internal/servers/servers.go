@@ -1,11 +1,25 @@
 package servers
 
-import "github.com/matjam/gobbs/internal/servers/telnet"
+import (
+	"sync"
 
-type Server interface {
-	Start()
-}
+	"github.com/matjam/gobbs/internal/servers/server"
+	"github.com/matjam/gobbs/internal/servers/telnet"
+)
 
 func Start() {
-	telnetServer := telnet.TelnetServer
+	var wg sync.WaitGroup
+
+	serverDefinitions := []server.Server{
+		telnet.NewTelnetServer(),
+	}
+
+	wg.Add(len(serverDefinitions))
+	for _, s := range serverDefinitions {
+		go func(s server.Server) {
+			s.Start()
+			wg.Done()
+		}(s)
+	}
+	wg.Wait()
 }
