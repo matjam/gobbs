@@ -13,6 +13,7 @@ import (
 
 type TelnetConnection struct {
 	conn        net.Conn
+	w           *ansi.Writer
 	user        *string
 	accessLevel int
 	state       *lua.State
@@ -71,19 +72,17 @@ func (t TelnetServer) handleTelnetConnection(conn net.Conn) {
 	tc.state = lua.NewState()
 	lua.OpenLibraries(tc.state)
 
-	tc.state.Register("send", luaSend)
+	tc.w = ansi.NewWriter(conn)
 
+	tc.registerLuaFunctions()
+
+	tc.w.Colorize()
+	tc.w.ForceReset()
+
+	// blocks until the user is disconnected
 	if err := lua.DoFile(tc.state, "lua/connect.lua"); err != nil {
 		panic(err)
 	}
 
-	c := ansi.NewWriter(conn)
-	c.Colorize()
-	c.ForceReset()
-	c.Blue().Bold().WriteString(config.String("telnet.banner", "GOBBS"))
 	conn.Close()
-}
-
-func luaSend(state *lua.State) int {
-	return 0
 }
