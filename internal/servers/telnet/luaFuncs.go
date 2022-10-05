@@ -8,22 +8,11 @@ import (
 )
 
 func (tc TelnetConnection) registerLuaFunctions() {
+	tc.state.Register("do_more", tc.do_more())
 	tc.state.Register("get_version", tc.getVersion())
 	tc.state.Register("get_config", tc.getConfig())
-	tc.state.Register("send", tc.send())
+	tc.state.Register("print", tc.print())
 	tc.state.Register("log_info", tc.logInfo())
-}
-
-func (tc TelnetConnection) send() lua.Function {
-	return func(state *lua.State) int {
-		str, ok := state.ToString(1)
-		if !ok {
-			log.Error().Msgf("error calling send(msg), incorrect number of arguments.")
-			return 0
-		}
-		tc.w.WriteString(str)
-		return 0 // number of results
-	}
 }
 
 func (tc TelnetConnection) logInfo() lua.Function {
