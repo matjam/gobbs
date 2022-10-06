@@ -7,6 +7,7 @@ require (
 	github.com/gookit/config/v2 v2.1.6
 	github.com/pborman/ansi v1.0.0
 	github.com/rs/zerolog v1.28.0
+	github.com/valyala/fasttemplate v1.2.1
 )
 
 require (
@@ -16,6 +17,7 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
+	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	golang.org/x/sys v0.0.0-20220928140112-f11e5e49a4ec // indirect
 	golang.org/x/text v0.3.7 // indirect
 )

@@ -11,12 +11,21 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+type State int
+
+const (
+	StateLogin State = iota
+	StateAfterLogin
+	StateMainMenu
+)
+
 type TelnetConnection struct {
 	conn        net.Conn
 	w           *ansi.Writer
 	user        *string
 	accessLevel int
-	state       *lua.State
+	l           *lua.State
+	state       State
 }
 
 type TelnetServer struct {
@@ -53,6 +62,7 @@ func (t TelnetServer) handleTelnetConnection(conn net.Conn) {
 		conn:        conn,
 		user:        &user,
 		accessLevel: -1,
+		state:       StateLogin,
 	}
 
 	// add the connection to the map of current connections. We use the remote host:port
@@ -69,8 +79,8 @@ func (t TelnetServer) handleTelnetConnection(conn net.Conn) {
 	//   and then it will handle the input all in LUA. It will
 	// * When the LUA function ends, that means the connection can be closed.
 
-	tc.state = lua.NewState()
-	lua.OpenLibraries(tc.state)
+	tc.l = lua.NewState()
+	lua.OpenLibraries(tc.l)
 
 	tc.w = ansi.NewWriter(conn)
 
@@ -79,9 +89,13 @@ func (t TelnetServer) handleTelnetConnection(conn net.Conn) {
 	tc.w.Colorize()
 	tc.w.ForceReset()
 
-	// blocks until the user is disconnected
-	if err := lua.DoFile(tc.state, "lua/connect.lua"); err != nil {
-		panic(err)
+	for {
+		switch tc.state {
+		case StateLogin:
+
+		default:
+			break
+		}
 	}
 
 	conn.Close()

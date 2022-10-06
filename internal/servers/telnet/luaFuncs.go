@@ -8,11 +8,11 @@ import (
 )
 
 func (tc TelnetConnection) registerLuaFunctions() {
-	tc.state.Register("do_more", tc.do_more())
-	tc.state.Register("get_version", tc.getVersion())
-	tc.state.Register("get_config", tc.getConfig())
-	tc.state.Register("print", tc.print())
-	tc.state.Register("log_info", tc.logInfo())
+	tc.l.Register("do_more", tc.doMore())
+	tc.l.Register("get_version", tc.getVersion())
+	tc.l.Register("get_config", tc.getConfig())
+	tc.l.Register("print", tc.print())
+	tc.l.Register("log_info", tc.logInfo())
 }
 
 func (tc TelnetConnection) logInfo() lua.Function {
